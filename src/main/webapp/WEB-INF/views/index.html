@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>My files</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <!-- Bootstrap CSS File -->
+    <link href="resources/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="resources/lib/bootstrap/css/bootstrap-grid.css" rel="stylesheet">
+
+    <!-- Libraries CSS Files -->
+    <link href="resources/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="http://fonts.googleapis.com/css?family=Lustria|Lato:300,400,700,400italic" rel="stylesheet"
+          type="text/css">
+
+    <!-- Main Stylesheet File -->
+    <link href="resources/css/style.css" rel="stylesheet">
+    <link href="resources/css/navbar.css" rel="stylesheet">
+
+    <!-- Scripts-->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.js"></script>
+    <script src="resources/js/app.js"></script>
+    <script src="resources/js/index.js"></script>
+
+
+    <!-- JavaScript Libraries -->
+    <script src="resources/lib/jquery/jquery.min.js"></script>
+    <script src="resources/lib/bootstrap/js/bootstrap.min.js"></script>
+
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=devise-width, initial-scale=1">
+
+
+</head>
+<body data-spy="scroll" data-target=".bs-docs-sidebar">
+<!-- Fixed navbar -->
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Cassandra filestorage</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li class="navbar-user"><a href="#" onclick="return false">Kazakh</a></li>
+                <li class="navbar-exit"><a href="#" onclick="return true">Logout <i
+                        class="fa fa-sign-out"></i></a></li>
+            </ul>
+        </div>
+        <!--/.nav-collapse -->
+    </div>
+</div>
+<div>
+    <div class="container">
+        <div class="row centered">
+            <div class="col-lg-8 col-lg-offset-2">
+                <h1>My files</h1>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="presentation-list">
+        <table style="height: 50px;">
+            <tbody>
+            <tr>
+                <td class="align-baseline"></td>
+            </tr>
+            </tbody>
+        </table>
+        <!--From top and bottom-->
+        <div class="row presentations">
+            <div class="col-lg-4">
+                <div class="ih-item square effect6 from_top_and_bottom">
+                    <form action="/upload" enctype="multipart/form-data" method="POST">
+                        <h2 style="text-align: center;">Choose file...</h2>
+                        <input name="file" type="file" style="display: block;
+    width: 100%;
+    height: 200px;
+    opacity: 0;">
+                        <br>
+                        <input type="submit" value="Upload" style="
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    width: 100%;
+    border: 0;
+    background: #2072b8;
+    color: #fff;
+"></form>
+                </div>
+            </div>
+        </div>
+        <!--end From top and bottom-->
+        <table style="height: 50px;">
+            <tbody>
+            <tr>
+                <td class="align-baseline"></td>
+            </tr>
+            </tbody>
+        </table>
+        <!--From top and bottom-->
+    </div>
+</div>
+</body>
+</html>
