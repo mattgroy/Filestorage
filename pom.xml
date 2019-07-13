@@ -125,13 +125,6 @@
 			<version>1.2.3</version>
 		</dependency>
 
-		<dependency>
-			<groupId>com.datastax.oss</groupId>
-			<artifactId>java-driver-mapper-processor</artifactId>
-			<version>${cassandra.java-driver.version}</version>
-			<optional>true</optional>
-		</dependency>
-
 	</dependencies>
 	<build>
 		<finalName>FileStorage</finalName>
@@ -152,13 +145,13 @@
 					<configuration>
 						<source>${java-version}</source>
 						<target>${java-version}</target>
-<!--						<annotationProcessorPaths>-->
-<!--							<path>-->
-<!--								<groupId>com.datastax.oss</groupId>-->
-<!--								<artifactId>java-driver-mapper-processor</artifactId>-->
-<!--								<version>${cassandra.java-driver.version}</version>-->
-<!--							</path>-->
-<!--						</annotationProcessorPaths>-->
+						<annotationProcessorPaths>
+							<path>
+								<groupId>com.datastax.oss</groupId>
+								<artifactId>java-driver-mapper-processor</artifactId>
+								<version>${cassandra.java-driver.version}</version>
+							</path>
+						</annotationProcessorPaths>
 					</configuration>
 				</plugin>
 				<plugin>

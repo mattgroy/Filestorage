@@ -17,14 +17,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import net.borolis.spring.FileStorageException;
 import net.borolis.spring.dao.interfaces.CassandraFileDAO;
-import net.borolis.spring.dao.interfaces.FileContentDAO;
 import net.borolis.spring.dao.interfaces.FileMetaDAO;
 import net.borolis.spring.entity.CassandraFile;
 import net.borolis.spring.entity.LocalFile;
-import net.borolis.spring.entity.LocalFileContent;
 import net.borolis.spring.util.CassandraUtil;
-
-import com.datastax.oss.driver.api.core.NoNodeAvailableException;
 
 /**
  * Сервис работы с файлами
@@ -45,11 +41,6 @@ public class FileService
     private final FileMetaDAO fileMetaDAO;
 
     /**
-     * Интерфейс для работы с метаинфо файлов в PostgreSQL
-     */
-    private final FileContentDAO fileContentDAO;
-
-    /**
      * Интерфейс для работы с файлами в Cassandra
      */
     private final CassandraFileDAO cassandraFileDAO;
@@ -57,11 +48,9 @@ public class FileService
     @Autowired
     public FileService(
             final FileMetaDAO fileMetaDAO,
-            final FileContentDAO fileContentDAO,
             final CassandraFileDAO cassandraFileDAO)
     {
         this.fileMetaDAO = fileMetaDAO;
-        this.fileContentDAO = fileContentDAO;
         this.cassandraFileDAO = cassandraFileDAO;
     }
 
@@ -72,28 +61,18 @@ public class FileService
      */
     public ResponseEntity deleteFile(long fileId)
     {
-        LocalFile pgFile;
-        LocalFileContent pgFileContent;
         try
         {
-            pgFile = fileMetaDAO.getById(fileId);
-            cassandraFileDAO.delete(pgFile.getCassandraObjectId());
-        }
-        catch (FileStorageException | NoNodeAvailableException e)
-        {
-            LOGGER.error(e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
-        try
-        {
+            LocalFile pgFile = fileMetaDAO.getById(fileId);
+            if (pgFile.getContent() == null)
+                cassandraFileDAO.delete(pgFile.getCassandraObjectId());
             fileMetaDAO.delete(pgFile);
-            pgFileContent = fileContentDAO.findByUUID(pgFile.getCassandraObjectId());
-            fileContentDAO.delete(pgFileContent);
             return ResponseEntity.ok(null);
         }
         catch (FileStorageException e)
         {
-            return ResponseEntity.ok(null);
+            LOGGER.error(e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
@@ -113,7 +92,7 @@ public class FileService
             pgLocalFile = fileMetaDAO.getById(fileId);
             cassandraFile = cassandraFileDAO.getByUUID(pgLocalFile.getCassandraObjectId());
         }
-        catch (FileStorageException | NoNodeAvailableException e)
+        catch (FileStorageException e)
         {
             LOGGER.error(e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
@@ -127,19 +106,14 @@ public class FileService
                     .body(cassandraFile.getContent().array());
         }
 
-        try
+        if (pgLocalFile.getContent() != null)
         {
-            LocalFileContent pgFileContent = fileContentDAO.findByUUID(pgLocalFile.getCassandraObjectId());
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION,
                             String.format("attachment; filename=\"%s\"", pgLocalFile.getTitle()))
-                    .body(pgFileContent.getContent());
+                    .body(pgLocalFile.getContent());
         }
-        catch (FileStorageException e)
-        {
-            LOGGER.error(e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
 
     /**
@@ -163,7 +137,7 @@ public class FileService
             files.forEach(this::saveFileContentToRemote);
             return ResponseEntity.ok(null);
         }
-        catch (FileStorageException | NoNodeAvailableException e)
+        catch (FileStorageException e)
         {
             LOGGER.error(e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
@@ -183,7 +157,7 @@ public class FileService
             saveFileContentToRemote(pgLocalFile);
             return ResponseEntity.ok(null);
         }
-        catch (FileStorageException | NoNodeAvailableException e)
+        catch (FileStorageException e)
         {
             LOGGER.error(e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
@@ -217,12 +191,11 @@ public class FileService
         LocalFile uploadedLocalFile = new LocalFile(
                 file.getOriginalFilename(),
                 file.getContentType(),
-                cassandraFileUUID
+                cassandraFileUUID,
+                fileBinaryData
         );
-        LocalFileContent uploadedLocalFileContent = new LocalFileContent(cassandraFileUUID, fileBinaryData);
 
         fileMetaDAO.saveOrUpdate(uploadedLocalFile);
-        fileContentDAO.saveOrUpdate(uploadedLocalFileContent);
         return ResponseEntity
                 .created(URI.create(String.format("/api/v1/files/%s", uploadedLocalFile.getId())))
                 .body(null);
@@ -235,19 +208,11 @@ public class FileService
      */
     private void saveFileContentToRemote(final LocalFile localFile)
     {
-        LocalFileContent fileContent;
-        try
-        {
-            fileContent = fileContentDAO.findByUUID(localFile.getCassandraObjectId());
-        }
-        catch (FileStorageException e)
-        {
-            LOGGER.error(e.getMessage(), e);
+        if (localFile.getContent() == null)
             return;
-        }
-
-        ByteBuffer fileBinaryData = ByteBuffer.wrap(fileContent.getContent());
+        ByteBuffer fileBinaryData = ByteBuffer.wrap(localFile.getContent());
         cassandraFileDAO.saveOrUpdate(new CassandraFile(localFile.getCassandraObjectId(), fileBinaryData));
-        fileContentDAO.delete(fileContent);
+        localFile.setContent(null);
+        fileMetaDAO.saveOrUpdate(localFile);
     }
 }

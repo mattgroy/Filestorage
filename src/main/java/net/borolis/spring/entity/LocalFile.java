@@ -7,7 +7,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Сущность описывающая представление файла в локальной БД
@@ -42,20 +46,34 @@ public class LocalFile implements LocalEntity
     @Column(name = "cassandra_object_uuid")
     private UUID cassandraObjectId;
 
+    /**
+     * Контент файла
+     */
+    @Lob
+    @Column(name = "content")
+    private byte[] content;
+
     public LocalFile()
     {
     }
 
-    public LocalFile(String title, String mimeType, UUID cassandraObjectId)
+    public LocalFile(String title, String mimeType, UUID cassandraObjectId, byte[] content)
     {
         this.title = title;
         this.cassandraObjectId = cassandraObjectId;
         this.mimeType = mimeType;
+        this.content = content;
     }
 
     public UUID getCassandraObjectId()
     {
         return cassandraObjectId;
+    }
+
+    @JsonIgnore
+    public byte[] getContent()
+    {
+        return content;
     }
 
     public Long getId()
@@ -76,6 +94,12 @@ public class LocalFile implements LocalEntity
     public void setCassandraObjectId(UUID cassandraObjectId)
     {
         this.cassandraObjectId = cassandraObjectId;
+    }
+
+    @JsonProperty
+    public void setContent(byte[] content)
+    {
+        this.content = content;
     }
 
     public void setId(Long id)
