@@ -5,7 +5,7 @@ import java.util.List;
 import net.borolis.spring.entity.LocalFile;
 
 /**
- * Интерфейс DAO для LocalFile
+ * Интерфейс DAO для {@link LocalFile}
  *
  * @see DAO
  * @author mratkov

@@ -2,8 +2,12 @@ package net.borolis.spring.dao.interfaces;
 
 import java.util.UUID;
 
-import net.borolis.spring.FileStorageException;
 import net.borolis.spring.entity.CassandraFile;
+
+import com.datastax.oss.driver.api.mapper.annotations.Dao;
+import com.datastax.oss.driver.api.mapper.annotations.Delete;
+import com.datastax.oss.driver.api.mapper.annotations.Insert;
+import com.datastax.oss.driver.api.mapper.annotations.Select;
 
 /**
  * Интерфейс DAO для CassandraFile
@@ -12,38 +16,39 @@ import net.borolis.spring.entity.CassandraFile;
  * @author mratkov
  * @since July 5, 2019
  */
+@Dao
 public interface CassandraFileDAO
 {
     /**
      * Удалить файл из БД
      *
      * @param cassandraFile {@link CassandraFile}
-     * @throws FileStorageException Не удалось подключиться к Cassandra
      */
-    void delete(final CassandraFile cassandraFile) throws FileStorageException;
+    @Delete
+    void delete(final CassandraFile cassandraFile);
 
     /**
      * Удалить файл из БД по UUID
      *
      * @param fileUUID UUID of file
-     * @throws FileStorageException Не удалось подключиться к Cassandra
      */
-    void delete(final UUID fileUUID) throws FileStorageException;
+    @Delete(entityClass = CassandraFile.class)
+    void delete(final UUID fileUUID);
 
     /**
      * Получить файл из БД по UUID
      *
      * @param fileUUID file UUID
      * @return {@link CassandraFile}
-     * @throws FileStorageException Не удалось подключиться к Cassandra
      */
-    CassandraFile getByUUID(final UUID fileUUID) throws FileStorageException;
+    @Select
+    CassandraFile getByUUID(final UUID fileUUID);
 
     /**
      * Вставить файл в БД
      *
      * @param cassandraFile {@link CassandraFile}
-     * @throws FileStorageException Не удалось подключиться к Cassandra
      */
-    void saveOrUpdate(final CassandraFile cassandraFile) throws FileStorageException;
+    @Insert
+    void saveOrUpdate(final CassandraFile cassandraFile);
 }
