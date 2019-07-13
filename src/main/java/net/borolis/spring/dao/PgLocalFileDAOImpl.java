@@ -9,22 +9,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import net.borolis.spring.dao.interfaces.FileMetaDAO;
+import net.borolis.spring.dao.interfaces.LocalFileDAO;
 import net.borolis.spring.entity.LocalFile;
 
 /**
  * @see AbstractPgDAOImpl
- * @see FileMetaDAO
+ * @see LocalFileDAO
  * @author mratkov
  * @since 9 июля, 2019
  */
 @Component
-public class PgFileMetaDAOImpl extends AbstractPgDAOImpl<LocalFile> implements FileMetaDAO
+public class PgLocalFileDAOImpl extends AbstractPgDAOImpl<LocalFile> implements LocalFileDAO
 {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PgFileMetaDAOImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PgLocalFileDAOImpl.class);
 
     @Autowired
-    public PgFileMetaDAOImpl(final SessionFactory sessionFactory)
+    public PgLocalFileDAOImpl(final SessionFactory sessionFactory)
     {
         super(sessionFactory);
     }

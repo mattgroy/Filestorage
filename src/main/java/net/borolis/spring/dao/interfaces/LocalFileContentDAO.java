@@ -2,7 +2,7 @@ package net.borolis.spring.dao.interfaces;
 
 import java.util.UUID;
 
-import net.borolis.spring.FileStorageException;
+import net.borolis.spring.exceptions.FileStorageException;
 import net.borolis.spring.entity.LocalFileContent;
 
 /**
@@ -11,7 +11,7 @@ import net.borolis.spring.entity.LocalFileContent;
  * @author mratkov
  * @since 12 июля, 2019
  */
-public interface FileContentDAO extends DAO<LocalFileContent>
+public interface LocalFileContentDAO extends DAO<LocalFileContent>
 {
     /**
      * Получить контент файла по cassandraObjectUUID

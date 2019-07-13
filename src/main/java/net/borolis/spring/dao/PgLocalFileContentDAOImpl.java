@@ -10,17 +10,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import net.borolis.spring.FileStorageException;
-import net.borolis.spring.dao.interfaces.FileContentDAO;
+import net.borolis.spring.exceptions.FileStorageException;
+import net.borolis.spring.dao.interfaces.LocalFileContentDAO;
 import net.borolis.spring.entity.LocalFileContent;
 
 @Component
-public class PgFileContentDAOImpl extends AbstractPgDAOImpl<LocalFileContent> implements FileContentDAO
+public class PgLocalFileContentDAOImpl extends AbstractPgDAOImpl<LocalFileContent> implements LocalFileContentDAO
 {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PgFileContentDAOImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PgLocalFileContentDAOImpl.class);
 
     @Autowired
-    public PgFileContentDAOImpl(final SessionFactory sessionFactory)
+    public PgLocalFileContentDAOImpl(final SessionFactory sessionFactory)
     {
         super(sessionFactory);
     }

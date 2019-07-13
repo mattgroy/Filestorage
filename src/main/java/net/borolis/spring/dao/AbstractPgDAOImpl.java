@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.transaction.annotation.Transactional;
 
-import net.borolis.spring.FileStorageException;
+import net.borolis.spring.exceptions.FileStorageException;
 import net.borolis.spring.dao.interfaces.DAO;
 import net.borolis.spring.entity.LocalEntity;
 

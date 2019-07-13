@@ -5,33 +5,27 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import net.borolis.spring.entity.LocalFile;
-import net.borolis.spring.service.FileService;
+import net.borolis.spring.service.LocalFileStorageService;
 
-/**
- * Контроллер для работы с файлами
- *
- * @author bliskov
- * @since July 5, 2019
- */
-@Controller
-public class FileController
+@RestController
+public class FileStorageRestController
 {
-    private final FileService fileService;
+    private final LocalFileStorageService localFileStorageService;
 
     @Autowired
-    public FileController(final FileService fileService)
+    public FileStorageRestController(final LocalFileStorageService localFileStorageService)
     {
-        this.fileService = fileService;
+        this.localFileStorageService = localFileStorageService;
     }
 
     /**
@@ -44,7 +38,7 @@ public class FileController
     @ResponseBody
     public ResponseEntity deleteFile(@PathVariable("id") final long fileId)
     {
-        return fileService.deleteFile(fileId);
+        return localFileStorageService.deleteFile(fileId);
     }
 
     /**
@@ -57,7 +51,7 @@ public class FileController
     @ResponseBody
     public ResponseEntity<byte[]> downloadFile(@PathVariable("id") final long fileId)
     {
-        return fileService.getFileContent(fileId);
+        return localFileStorageService.getFileContent(fileId);
     }
 
     /**
@@ -69,7 +63,7 @@ public class FileController
     @ResponseBody
     public List<LocalFile> getFiles()
     {
-        return fileService.getFiles();
+        return localFileStorageService.getFiles();
     }
 
     /**
@@ -82,7 +76,7 @@ public class FileController
     @ResponseBody
     public ResponseEntity uploadAllFilesContentHandler()
     {
-        return fileService.saveAllFilesContentToRemote();
+        return localFileStorageService.saveAllFilesContentToRemote();
     }
 
     /**
@@ -94,7 +88,7 @@ public class FileController
     @PostMapping("/api/v1/files")
     public String uploadFileLocally(@RequestParam("file") final MultipartFile file)
     {
-        fileService.saveFileLocally(file);
+        localFileStorageService.saveFileLocally(file);
         return "redirect:/";
     }
 
@@ -108,6 +102,6 @@ public class FileController
     @ResponseBody
     public ResponseEntity uploadFileToRemote(@PathVariable("id") final long fileId)
     {
-        return fileService.saveFileContentToRemote(fileId);
+        return localFileStorageService.saveFileContentToRemote(fileId);
     }
 }

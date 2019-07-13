@@ -49,6 +49,6 @@ public interface CassandraFileDAO
      *
      * @param cassandraFile {@link CassandraFile}
      */
-    @Insert
+    @Insert(ifNotExists = true)
     void saveOrUpdate(final CassandraFile cassandraFile);
 }
