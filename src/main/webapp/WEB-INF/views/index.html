@@ -41,12 +41,18 @@
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
             <a class="navbar-brand" href="/">Cassandra filestorage</a>
+            <div class="uploadAll"></div>
+<!--            <form action="/api/v1/files/locals" method="post">-->
+<!--                <input type="submit" value="Upload all to Cassandra" style="-->
+<!--    bottom: 10px;-->
+<!--    left: 0;-->
+<!--    width: 100%;-->
+<!--    border: 0;-->
+<!--    background: #2072b8;-->
+<!--    color: #fff;-->
+<!--">-->
+<!--            </form>-->
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
@@ -80,7 +86,7 @@
         <div class="row presentations">
             <div class="col-lg-4">
                 <div class="ih-item square effect6 from_top_and_bottom">
-                    <form action="/upload" enctype="multipart/form-data" method="POST">
+                    <form action="/api/v1/files" enctype="multipart/form-data" method="POST">
                         <h2 style="text-align: center;">Choose file...</h2>
                         <input name="file" type="file" style="display: block;
     width: 100%;
@@ -97,6 +103,7 @@
     color: #fff;
 "></form>
                 </div>
+
             </div>
         </div>
         <!--end From top and bottom-->

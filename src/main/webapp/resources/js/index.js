@@ -1,44 +1,68 @@
-let countOfBlocks = 1
-let allFiles
+let countOfBlocks = 1;
+let allFiles;
 
 
 function onEditClick(event) {
-    let fileId = event.currentTarget.parentElement.parentElement.parentElement.parentElement.getAttribute('fileId')
-    window.location.href = '/api/v1/file/' + fileId
+    let fileId = event.currentTarget.parentElement.parentElement.parentElement.parentElement.getAttribute('fileId');
+    window.location.href = '/api/v1/files/' + fileId
 }
 
 function onRemoveClick(event) {
-    let confirm = window.confirm("Are you sure want to remove file?")
+    let confirm = window.confirm("Are you sure want to remove file?");
     if(confirm)
     {
-        let fileId = event.currentTarget.parentElement.parentElement.parentElement.parentElement.getAttribute('fileId')
-        console.log('remove:' + fileId)
-        axios.delete('/api/v1/file/'+ fileId, {})
+        let fileId = event.currentTarget.parentElement.parentElement.parentElement.parentElement.getAttribute('fileId');
+        console.log('remove:' + fileId);
+        axios.delete('/api/v1/files/'+ fileId, {})
             .then((response) => {
                 window.location.href = '/'
             })
             .catch((error) => {
                 alert(error)
             })
-
     }
+}
 
+function onUploadClick(event) {
+    let fileId = event.currentTarget.parentElement.parentElement.parentElement.parentElement.getAttribute('fileId');
+    console.log('upload:' + fileId);
+    axios.post('/api/v1/files/'+ fileId, {})
+        .then((response) => {
+            window.location.href = '/'
+        })
+        .catch((error) => {
+            alert(error)
+        })
+}
+
+function createUploadAllButton() {
+    let buttonHtml = $("<form action=\"/api/v1/files/locals\" method=\"post\">\n" +
+        "                   <input type=\"submit\" value=\"Upload all to Cassandra\" style=\"\n" +
+        "                       bottom: 10px;\n" +
+        "                       left: 0;\n" +
+        "                       width: 100%;\n" +
+        "                       border: 0;\n" +
+        "                       background: #2072b8;\n" +
+        "                       color: #fff;\n" +
+        "                   \">\n" +
+        "               </form>");
+    $(".button-upload-all").append(buttonHtml);
 }
 
 function addFileToList(currentFile)
 {
     if(countOfBlocks % 3 === 0)
     {
-        let row = $("<div class=\"row presentations\"></div>")
+        let row = $("<div class=\"row presentations\"></div>");
         let table = $("<table style=\"height: 50px;\">\n" +
             "            <tbody>\n" +
             "            <tr>\n" +
             "                <td class=\"align-baseline\"></td>\n" +
             "            </tr>\n" +
             "            </tbody>\n" +
-            "        </table>")
+            "        </table>");
 
-        $(".presentation-list").append(row)
+        $(".presentation-list").append(row);
         $(".presentation-list").append(table)
     }
 
@@ -53,6 +77,9 @@ function addFileToList(currentFile)
             "                            <button type=\"submit\" class=\"btn edit\">\n" +
             "                                <i class=\"fa fa-cloud-download\"></i>\n" +
             "                            </button>\n" +
+            "                            <button type=\"submit\" class=\"btn upload\">\n" +
+            "                                <i class=\"fa fa-exchange\"></i>\n" +
+            "                            </button>\n" +
             "                            <button type=\"submit\" class=\"btn remove confirm\">\n" +
             "                                <i class=\"fa fa-trash-o\"></i>\n" +
             "                            </button>\n" +
@@ -60,27 +87,27 @@ function addFileToList(currentFile)
             "                        </div>\n" +
             "                    </a>\n" +
             "                </div>\n" +
-            "            </div>")
+            "            </div>");
 
-        presentationHtml.attr('id', countOfBlocks.toString())
-        presentationHtml.attr('fileId', currentFile.id.toString())
-
-
-        let body = presentationHtml.children().children()
-
-        let imgClass = body.children('.img')
-        let infoClass = body.children('.info')
-
-        imgClass.children().attr('src', "https://cdn.dribbble.com/users/803982/screenshots/2299994/16_-_file_manager.png")
-        infoClass.children('.presentationName').html(currentFile.title)
+        presentationHtml.attr('id', countOfBlocks.toString());
+        presentationHtml.attr('fileId', currentFile.id.toString());
 
 
+        let body = presentationHtml.children().children();
+
+        let imgClass = body.children('.img');
+        let infoClass = body.children('.info');
+
+        imgClass.children().attr('src', "https://cdn.dribbble.com/users/803982/screenshots/2299994/16_-_file_manager.png");
+        infoClass.children('.presentationName').html(currentFile.title);
 
 
-    console.log(body.find('info'))
-        presentationHtml.children().children().children().find('info').find('presentationName').html(currentFile.title)
 
-    $(".row.presentations").last().append(presentationHtml)
+
+    console.log(body.find('info'));
+        presentationHtml.children().children().children().find('info').find('presentationName').html(currentFile.title);
+
+    $(".row.presentations").last().append(presentationHtml);
 
 
     countOfBlocks++
@@ -89,23 +116,27 @@ function addFileToList(currentFile)
 
 
 $(document).ready(function () {
-    axios.post('/api/v1/files', {})
+    axios.get('/api/v1/files', {})
         .then((response) => {
-            console.log(response)
-            allFiles = response.data
-            console.log(allFiles)
+            console.log(response);
+            allFiles = response.data;
+            console.log(allFiles);
 
             allFiles.forEach((currentFile) => {
                 addFileToList(currentFile)
-            })
+            });
 
-            $('.btn.edit').click(onEditClick)
+            $('.btn.edit').click(onEditClick);
+
+            $('.btn.upload').click(onUploadClick);
 
             $('.btn.remove').click(onRemoveClick)
 
         })
         .catch((error) => {
-            console.log(error)
+            console.log(error);
             alert(error)
-        })
-})
+        });
+
+    createUploadAllButton();
+});

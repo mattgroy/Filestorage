@@ -97,6 +97,11 @@ p {
   font-size: 22px;
 }
 
+.ih-item.square .info .fa-exchange{
+  color: #ffffff;
+  font-size: 22px;
+}
+
 .ih-item.square .info .fa-trash-o{
   color: #ffffff;
   font-size: 22px;

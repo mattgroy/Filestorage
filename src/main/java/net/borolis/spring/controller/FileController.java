@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import net.borolis.spring.entity.PgFile;
+import net.borolis.spring.entity.LocalFile;
 import net.borolis.spring.service.FileService;
 
 /**
@@ -40,11 +40,11 @@ public class FileController
      * @param fileId - id of file
      * @return Index page template
      */
-    @DeleteMapping(value = "/api/v1/file/{id}")
-    public String deleteFile(@PathVariable("id") final long fileId)
+    @DeleteMapping(value = "/api/v1/files/{id}")
+    @ResponseBody
+    public ResponseEntity deleteFile(@PathVariable("id") final long fileId)
     {
-        fileService.deleteFile(fileId);
-        return "index";
+        return fileService.deleteFile(fileId);
     }
 
     /**
@@ -53,11 +53,11 @@ public class FileController
      * @param fileId - id of file
      * @return returns requested file
      */
-    @GetMapping(value = "/api/v1/file/{id}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @GetMapping(value = "/api/v1/files/{id}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
     public ResponseEntity<byte[]> downloadFile(@PathVariable("id") final long fileId)
     {
-        return fileService.getDownloadableFile(fileId);
+        return fileService.getFileContent(fileId);
     }
 
     /**
@@ -65,23 +65,49 @@ public class FileController
      *
      * @return file list
      */
-    @PostMapping(value = "/api/v1/files", produces = "application/json", consumes = "application/json")
+    @GetMapping(value = "/api/v1/files", produces = "application/json")
     @ResponseBody
-    public List<PgFile> getFiles()
+    public List<LocalFile> getFiles()
     {
         return fileService.getFiles();
     }
 
     /**
-     * Обработчик для события загрузки файла
+     * Обработчик для события загрузки контента всех файлов в удалённую БД
+     *
+     * @author mratkov
+     * @since 9 июля, 2019
+     */
+    @PostMapping("/api/v1/files/locals")
+    @ResponseBody
+    public ResponseEntity uploadAllFilesContentHandler()
+    {
+        return fileService.saveAllFilesContentToRemote();
+    }
+
+    /**
+     * Обработчик для события загрузки файла с контентом в локальную БД
      *
      * @param file - Uploaded file
      * @return Index page template
      */
-    @PostMapping("/upload")
-    public String uploadFileHandler(@RequestParam("file") final MultipartFile file)
+    @PostMapping("/api/v1/files")
+    public String uploadFileLocally(@RequestParam("file") final MultipartFile file)
     {
-        fileService.saveFile(file);
-        return "index";
+        fileService.saveFileLocally(file);
+        return "redirect:/";
+    }
+
+    /**
+     * Обработчик для загрузки всех файлов в удалённую БД
+     *
+     * @param fileId id файла в локальной БД
+     * @return {@link ResponseEntity}
+     */
+    @PostMapping("/api/v1/files/{id}")
+    @ResponseBody
+    public ResponseEntity uploadFileToRemote(@PathVariable("id") final long fileId)
+    {
+        return fileService.saveFileContentToRemote(fileId);
     }
 }

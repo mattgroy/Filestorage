@@ -9,7 +9,8 @@
 	<url>http://maven.apache.org</url>
 	<properties>
 		<java-version>1.8</java-version>
-		<org.springframework-version>4.3.0.RELEASE</org.springframework-version>
+		<org.springframework.version>4.3.0.RELEASE</org.springframework.version>
+		<cassandra.java-driver.version>4.1.0</cassandra.java-driver.version>
 	</properties>
 
 
@@ -49,13 +50,27 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
-			<version>${org.springframework-version}</version>
+			<version>${org.springframework.version}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+			<version>${org.springframework.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-dbcp2</artifactId>
+			<version>2.6.0</version>
+		</dependency>
+
 		<dependency>
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
 			<version>1.2.1</version> <!-- makesure correct version here -->
 		</dependency>
+
 		<dependency>
 			<groupId>org.thymeleaf</groupId>
 			<artifactId>thymeleaf</artifactId>
@@ -71,13 +86,19 @@
 		<dependency>
 			<groupId>com.datastax.oss</groupId>
 			<artifactId>java-driver-core</artifactId>
-			<version>4.1.0</version>
+			<version>${cassandra.java-driver.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.datastax.oss</groupId>
 			<artifactId>java-driver-query-builder</artifactId>
-			<version>4.1.0</version>
+			<version>${cassandra.java-driver.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.datastax.oss</groupId>
+			<artifactId>java-driver-mapper-runtime</artifactId>
+			<version>${cassandra.java-driver.version}</version>
 		</dependency>
 
 		<dependency>
@@ -92,10 +113,13 @@
 			<version>3.0.1</version>
 			<scope>provided</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
+		</dependency>
 	</dependencies>
-
-
-
 	<build>
 		<finalName>FileStorage</finalName>
 		<pluginManagement>
@@ -111,16 +135,23 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>2.3.2</version>
+					<version>3.7.0</version>
 					<configuration>
 						<source>${java-version}</source>
 						<target>${java-version}</target>
+						<annotationProcessorPaths>
+							<path>
+								<groupId>com.datastax.oss</groupId>
+								<artifactId>java-driver-mapper-processor</artifactId>
+								<version>${cassandra.java-driver.version}</version>
+							</path>
+						</annotationProcessorPaths>
 					</configuration>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-war-plugin</artifactId>
-					<version>2.4</version>
+					<version>2.6</version>
 					<configuration>
 						<warSourceDirectory>src/main/webapp</warSourceDirectory>
 						<warName>FileStorage</warName>

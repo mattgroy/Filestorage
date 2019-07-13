@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 import java.util.UUID;
 
 /**
- * Класс представления файла для Apache Casssandra
+ * Класс представления файла для Apache Cassandra
  *
  * @author bliskov
  * @since July 5, 2019
@@ -13,16 +13,6 @@ public class CassandraFile
 {
     private UUID uuid;
     private ByteBuffer content;
-
-    public CassandraFile()
-    {
-
-    }
-
-    public CassandraFile(ByteBuffer content)
-    {
-        this.content = content;
-    }
 
     public CassandraFile(UUID uuid, ByteBuffer content)
     {
