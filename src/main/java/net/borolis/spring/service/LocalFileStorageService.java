@@ -3,27 +3,25 @@ package net.borolis.spring.service;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.ByteBuffer;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import net.borolis.spring.exceptions.FileStorageException;
-import net.borolis.spring.dao.interfaces.CassandraFileDAO;
 import net.borolis.spring.dao.interfaces.LocalFileContentDAO;
 import net.borolis.spring.dao.interfaces.LocalFileDAO;
 import net.borolis.spring.entity.CassandraFile;
 import net.borolis.spring.entity.LocalFile;
 import net.borolis.spring.entity.LocalFileContent;
-import net.borolis.spring.util.CassandraUtil;
+import net.borolis.spring.utils.GeneralUtils;
 
 import com.datastax.oss.driver.api.core.NoNodeAvailableException;
 
@@ -61,78 +59,22 @@ public class LocalFileStorageService
     /**
      * Удаление файла из системы
      *
-     * @param fileId file id
+     * @param localFile {@link LocalFile}
      */
-    public ResponseEntity deleteFile(long fileId)
+    public void deleteFile(LocalFile localFile)
     {
-        LocalFile pgFile;
-        LocalFileContent pgFileContent;
-        try
+        if (localFile.getFileContent() != null)
         {
-            pgFile = localFileDAO.getById(fileId);
-            cassandraFileDAO.delete(pgFile.getCassandraObjectId());
+            LocalFileContent localFileContent = localFile.getFileContent();
+            localFileContent.unlinkFileMeta(localFile);
+            tryDeleteFileContent(localFileContent);
         }
-        catch (FileStorageException | NoNodeAvailableException e)
-        {
-            LOGGER.error(e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
-        try
-        {
-            localFileDAO.delete(pgFile);
-            pgFileContent = localFileContentDAO.findByUUID(pgFile.getCassandraObjectId());
-            localFileContentDAO.delete(pgFileContent);
-            return ResponseEntity.ok(null);
-        }
-        catch (FileStorageException e)
-        {
-            return ResponseEntity.ok(null);
-        }
+        localFileDAO.delete(localFile);
     }
 
-    /**
-     * Получить файл по id
-     *
-     * @param fileId file id
-     * @return Downloadable Entity with file
-     */
-    public ResponseEntity<byte[]> getFileContent(final long fileId)
+    public LocalFile getFile(final long fileId)
     {
-        LocalFile pgLocalFile;
-        CassandraFile cassandraFile;
-
-        try
-        {
-            pgLocalFile = localFileDAO.getById(fileId);
-            cassandraFile = cassandraFileDAO.getByUUID(pgLocalFile.getCassandraObjectId());
-        }
-        catch (FileStorageException | NoNodeAvailableException e)
-        {
-            LOGGER.error(e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
-
-        if (cassandraFile != null)
-        {
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION,
-                            String.format("attachment; filename=\"%s\"", pgLocalFile.getTitle()))
-                    .body(cassandraFile.getContent().array());
-        }
-
-        try
-        {
-            LocalFileContent pgFileContent = localFileContentDAO.findByUUID(pgLocalFile.getCassandraObjectId());
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION,
-                            String.format("attachment; filename=\"%s\"", pgLocalFile.getTitle()))
-                    .body(pgFileContent.getContent());
-        }
-        catch (FileStorageException e)
-        {
-            LOGGER.error(e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+        return localFileDAO.get(fileId);
     }
 
     /**
@@ -140,15 +82,25 @@ public class LocalFileStorageService
      *
      * @return List of LocalFile
      */
-    public List<LocalFile> getFiles()
+    public Collection<LocalFile> getFiles()
     {
         return localFileDAO.getFiles();
+    }
+
+    public Collection<LocalFile> getFiles(String hash)
+    {
+        return localFileDAO.getFiles(hash);
+    }
+
+    public Collection<LocalFileContent> getFileContents()
+    {
+        return localFileContentDAO.getFileContents();
     }
 
     /**
      * Сохранение контента всех файлов из локальной БД в удалённую БД (если их там нет)
      */
-    public ResponseEntity saveAllFilesContentToRemote()
+    public Set<Long> saveAllFilesContentToRemote()
     {
         try
         {
@@ -168,11 +120,11 @@ public class LocalFileStorageService
      *
      * @param id id файла в локальной БД
      */
-    public ResponseEntity saveFileContentToRemote(final long id)
+    public void saveFileContentToRemote(final long id)
     {
         try
         {
-            LocalFile pgLocalFile = localFileDAO.getById(id);
+            LocalFile pgLocalFile = localFileDAO.get(id);
             saveFileContentToRemote(pgLocalFile);
             return ResponseEntity.ok(null);
         }
@@ -188,7 +140,7 @@ public class LocalFileStorageService
      *
      * @param file файл, отправленный пользователем
      */
-    public ResponseEntity saveFileLocally(MultipartFile file)
+    public long saveFile(MultipartFile file)
     {
         if (file.isEmpty())
         {
@@ -206,7 +158,7 @@ public class LocalFileStorageService
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
 
-        UUID cassandraFileUUID = CassandraUtil.generateUUID();
+        UUID cassandraFileUUID = GeneralUtils.generateUUID();
         LocalFile uploadedLocalFile = new LocalFile(
                 file.getOriginalFilename(),
                 file.getContentType(),
@@ -231,7 +183,7 @@ public class LocalFileStorageService
         LocalFileContent fileContent;
         try
         {
-            fileContent = localFileContentDAO.findByUUID(localFile.getCassandraObjectId());
+            fileContent = localFileContentDAO.get(localFile.getHash());
         }
         catch (FileStorageException e)
         {
@@ -240,7 +192,13 @@ public class LocalFileStorageService
         }
 
         ByteBuffer fileBinaryData = ByteBuffer.wrap(fileContent.getContent());
-        cassandraFileDAO.saveOrUpdate(new CassandraFile(localFile.getCassandraObjectId(), fileBinaryData));
+        cassandraFileDAO.saveOrUpdate(new CassandraFile(localFile.getHash(), fileBinaryData));
         localFileContentDAO.delete(fileContent);
+    }
+
+    private void tryDeleteFileContent(LocalFileContent localFileContent)
+    {
+        if (localFileContent.getLocalFilesMeta().size() == 0)
+            localFileContentDAO.delete(localFileContent);
     }
 }

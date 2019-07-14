@@ -14,12 +14,13 @@ import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
  * @since July 5, 2019
  */
 @Entity(defaultKeyspace = "file_manager_keyspace")
+//@Entity
 @CqlName("file_table")
 public class CassandraFile
 {
     @PartitionKey
-    @CqlName("file_id")
-    private UUID uuid;
+    @CqlName("file_hash")
+    private String  hash;
 
     @CqlName("file_content")
     private ByteBuffer content;
@@ -28,9 +29,9 @@ public class CassandraFile
     {
     }
 
-    public CassandraFile(UUID uuid, ByteBuffer content)
+    public CassandraFile(String hash, ByteBuffer content)
     {
-        this.uuid = uuid;
+        this.hash = hash;
         this.content = content;
     }
 
@@ -39,9 +40,9 @@ public class CassandraFile
         return content;
     }
 
-    public UUID getUuid()
+    public String getHash()
     {
-        return uuid;
+        return hash;
     }
 
     public void setContent(ByteBuffer content)
@@ -49,14 +50,14 @@ public class CassandraFile
         this.content = content;
     }
 
-    public void setUuid(UUID uuid)
+    public void setHash(String hash)
     {
-        this.uuid = uuid;
+        this.hash = hash;
     }
 
     @Override
     public String toString()
     {
-        return getUuid() + "->" + getContent();
+        return getHash() + "->" + getContent();
     }
 }

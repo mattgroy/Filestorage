@@ -1,4 +1,4 @@
-//package net.borolis.spring.util;
+//package net.borolis.spring.utils;
 //
 //import java.time.Duration;
 //

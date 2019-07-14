@@ -1,12 +1,15 @@
 package net.borolis.spring.dao.interfaces;
 
-import java.util.UUID;
+import java.util.Optional;
 
+import net.borolis.spring.dao.mappers.CassandraFileProvider;
 import net.borolis.spring.entity.CassandraFile;
 
 import com.datastax.oss.driver.api.mapper.annotations.Dao;
 import com.datastax.oss.driver.api.mapper.annotations.Delete;
 import com.datastax.oss.driver.api.mapper.annotations.Insert;
+import com.datastax.oss.driver.api.mapper.annotations.Query;
+import com.datastax.oss.driver.api.mapper.annotations.QueryProvider;
 import com.datastax.oss.driver.api.mapper.annotations.Select;
 
 /**
@@ -20,7 +23,7 @@ import com.datastax.oss.driver.api.mapper.annotations.Select;
 public interface CassandraFileDAO
 {
     /**
-     * Удалить файл из БД
+     * Удаление файла из БД
      *
      * @param cassandraFile {@link CassandraFile}
      */
@@ -28,27 +31,30 @@ public interface CassandraFileDAO
     void delete(final CassandraFile cassandraFile);
 
     /**
-     * Удалить файл из БД по UUID
+     * Удаление файла из БД по хешу
      *
-     * @param fileUUID UUID of file
+     * @param hash Хеш файла
      */
     @Delete(entityClass = CassandraFile.class)
-    void delete(final UUID fileUUID);
+    void delete(final String hash);
 
     /**
-     * Получить файл из БД по UUID
+     * Получение файла из БД по хешу
      *
-     * @param fileUUID file UUID
+     * @param hash Хеш файла
      * @return {@link CassandraFile}
      */
     @Select
-    CassandraFile getByUUID(final UUID fileUUID);
+    Optional<CassandraFile> getByHash(final String hash);
 
     /**
-     * Вставить файл в БД
+     * Вставка файла в БД
      *
      * @param cassandraFile {@link CassandraFile}
      */
     @Insert(ifNotExists = true)
-    void saveOrUpdate(final CassandraFile cassandraFile);
+    void save(final CassandraFile cassandraFile);
+
+    @QueryProvider(providerClass = CassandraFileProvider.class, entityHelpers = CassandraFile.class)
+    boolean isHashStored(final String hash);
 }

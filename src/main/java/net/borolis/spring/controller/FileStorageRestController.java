@@ -1,8 +1,11 @@
 package net.borolis.spring.controller;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -10,98 +13,95 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import net.borolis.spring.entity.LocalFile;
-import net.borolis.spring.service.LocalFileStorageService;
+import net.borolis.spring.service.FileStorageService;
 
+/**
+ * Контроллер REST-Api файлового хранилища
+ *
+ * @author mratkov
+ * @since 13 июля, 2019
+ */
 @RestController
 public class FileStorageRestController
 {
-    private final LocalFileStorageService localFileStorageService;
+    private final FileStorageService fileStorageService;
 
     @Autowired
-    public FileStorageRestController(final LocalFileStorageService localFileStorageService)
+    public FileStorageRestController(final FileStorageService fileStorageService)
     {
-        this.localFileStorageService = localFileStorageService;
+        this.fileStorageService = fileStorageService;
     }
 
     /**
-     * Обработчик для запроса на удаление файла
+     * Обработчик запроса на удаление файла
      *
      * @param fileId - id of file
-     * @return Index page template
      */
     @DeleteMapping(value = "/api/v1/files/{id}")
-    @ResponseBody
     public ResponseEntity deleteFile(@PathVariable("id") final long fileId)
     {
-        return localFileStorageService.deleteFile(fileId);
+        fileStorageService.deleteFile(fileId);
+        return ResponseEntity.noContent().build();
     }
 
     /**
-     * Обработчик для запроса на получение файла
+     * Обработчик запроса на получение файла
      *
      * @param fileId - id of file
-     * @return returns requested file
+     * @return Запрашиваемый файл, обёрнутый в HTTP-ответ
      */
     @GetMapping(value = "/api/v1/files/{id}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    @ResponseBody
     public ResponseEntity<byte[]> downloadFile(@PathVariable("id") final long fileId)
     {
-        return localFileStorageService.getFileContent(fileId);
+        return fileStorageService.getFileWrapped(fileId);
     }
 
     /**
-     * Обработчик для запроса на получение списка всех файлов
+     * Обработчик запроса на получение списка всех хранимых файлов
      *
-     * @return file list
+     * @return Список с метаинформацией хранимых файлов
      */
     @GetMapping(value = "/api/v1/files", produces = "application/json")
-    @ResponseBody
-    public List<LocalFile> getFiles()
+    public Collection<LocalFile> getFiles()
     {
-        return localFileStorageService.getFiles();
+        return fileStorageService.getFiles();
     }
 
     /**
-     * Обработчик для события загрузки контента всех файлов в удалённую БД
+     * Обработчик запроса на загрузку контента всех файлов в удалённую БД
      *
-     * @author mratkov
-     * @since 9 июля, 2019
+     * @return Список с ID загруженных файлов
      */
     @PostMapping("/api/v1/files/locals")
-    @ResponseBody
-    public ResponseEntity uploadAllFilesContentHandler()
+    public Collection<Long> uploadAllFilesContent()
     {
-        return localFileStorageService.saveAllFilesContentToRemote();
+        return fileStorageService.saveAllFilesContent();
     }
 
     /**
-     * Обработчик для события загрузки файла с контентом в локальную БД
+     * Обработчик запроса на загрузку файла с контентом в локальную БД
      *
-     * @param file - Uploaded file
-     * @return Index page template
+     * @param file Загружаемый файл
      */
     @PostMapping("/api/v1/files")
-    public String uploadFileLocally(@RequestParam("file") final MultipartFile file)
+    public ResponseEntity uploadFileToLocal(@RequestParam("file") final MultipartFile file)
     {
-        localFileStorageService.saveFileLocally(file);
-        return "redirect:/";
+        long id = fileStorageService.saveFile(file);
+        return ResponseEntity.status(HttpStatus.CREATED).body(id);
     }
 
     /**
-     * Обработчик для загрузки всех файлов в удалённую БД
+     * Обработчик запроса на загрузку контента файла в удалённую БД
      *
-     * @param fileId id файла в локальной БД
-     * @return {@link ResponseEntity}
+     * @param localFileId ID файла в локальной БД
      */
     @PostMapping("/api/v1/files/{id}")
-    @ResponseBody
-    public ResponseEntity uploadFileToRemote(@PathVariable("id") final long fileId)
+    public Collection<Long> uploadFileToRemote(@PathVariable("id") final long localFileId)
     {
-        return localFileStorageService.saveFileContentToRemote(fileId);
+        return fileStorageService.saveFileContent(localFileId);
     }
 }

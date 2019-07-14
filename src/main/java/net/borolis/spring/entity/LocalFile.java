@@ -1,13 +1,18 @@
 package net.borolis.spring.entity;
 
-import java.util.UUID;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Сущность описывающая представление файла в локальной БД
@@ -37,25 +42,41 @@ public class LocalFile implements LocalEntity
     private String mimeType;
 
     /**
-     * UUID файла
+     * Хэш контента
      */
-    @Column(name = "cassandra_object_uuid")
-    private UUID cassandraObjectId;
+    @JsonIgnore
+    @Column(name = "hash")
+    private String hash;
+
+    /**
+     * Контент файла
+     */
+    @JsonIgnore
+    @Column(name = "fileContent")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tbl_files_content_id")
+    private LocalFileContent fileContent;
 
     public LocalFile()
     {
     }
 
-    public LocalFile(String title, String mimeType, UUID cassandraObjectId)
+    public LocalFile(String title, String mimeType, String hash, LocalFileContent fileContent)
     {
         this.title = title;
-        this.cassandraObjectId = cassandraObjectId;
+        this.hash = hash;
         this.mimeType = mimeType;
+        this.fileContent = fileContent;
     }
 
-    public UUID getCassandraObjectId()
+    public String getHash()
     {
-        return cassandraObjectId;
+        return hash;
+    }
+
+    public LocalFileContent getFileContent()
+    {
+        return fileContent;
     }
 
     public Long getId()
@@ -73,9 +94,14 @@ public class LocalFile implements LocalEntity
         return title;
     }
 
-    public void setCassandraObjectId(UUID cassandraObjectId)
+    public void setHash(String hash)
     {
-        this.cassandraObjectId = cassandraObjectId;
+        this.hash = hash;
+    }
+
+    public void setFileContent(LocalFileContent fileContent)
+    {
+        this.fileContent = fileContent;
     }
 
     public void setId(Long id)
@@ -96,6 +122,23 @@ public class LocalFile implements LocalEntity
     @Override
     public String toString()
     {
-        return getId() + "  " + getTitle() + "  " + getCassandraObjectId() + "  " + getMimeType();
+        return getId() + "  " + getTitle() + "  " + getHash() + "  " + getMimeType();
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        LocalFile localFile = (LocalFile)o;
+        return getId().equals(localFile.getId());
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(getId());
     }
 }

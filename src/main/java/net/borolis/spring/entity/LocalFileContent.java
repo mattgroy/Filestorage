@@ -1,13 +1,18 @@
 package net.borolis.spring.entity;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -16,7 +21,6 @@ import javax.persistence.Table;
  * @author mratkov
  * @since 12 июля, 2019
  */
-// TODO: 12.07.19 На текущий момент файлы с одинаковым контентом считаются разными (т.к. присваиваются разные UUID)
 @Entity
 @Table(name = "tbl_files_content")
 public class LocalFileContent implements LocalEntity
@@ -26,26 +30,39 @@ public class LocalFileContent implements LocalEntity
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "cassandra_object_uuid")
-    private UUID cassandraUUID;
+    /**
+     * Список мета-информации файлов с данным контентом
+     */
+    @OneToMany(mappedBy = "fileContent")
+    private List<LocalFile> localFilesMeta  = new ArrayList<>();
 
+    /**
+     * Хэш контента
+     */
+    @Column(name = "hash")
+    private String hash;
+
+    /**
+     * Контент файла
+     */
     @Lob
     @Column(name = "content")
+    @Basic(fetch = FetchType.LAZY)
     private byte[] content;
 
     public LocalFileContent()
     {
     }
 
-    public LocalFileContent(UUID cassandraUUID, byte[] content)
+    public LocalFileContent(String hash, byte[] content)
     {
-        this.cassandraUUID = cassandraUUID;
+        this.hash = hash;
         this.content = content;
     }
 
-    public UUID getCassandraUUID()
+    public String getHash()
     {
-        return cassandraUUID;
+        return hash;
     }
 
     public byte[] getContent()
@@ -58,9 +75,14 @@ public class LocalFileContent implements LocalEntity
         return id;
     }
 
-    public void setCassandraUUID(UUID cassandraUUID)
+    public List<LocalFile> getLocalFilesMeta()
     {
-        this.cassandraUUID = cassandraUUID;
+        return localFilesMeta;
+    }
+
+    public void setHash(String hash)
+    {
+        this.hash = hash;
     }
 
     public void setContent(byte[] content)
@@ -71,5 +93,22 @@ public class LocalFileContent implements LocalEntity
     public void setId(Long id)
     {
         this.id = id;
+    }
+
+    public void setLocalFilesMeta(List<LocalFile> localFilesMeta)
+    {
+        this.localFilesMeta = localFilesMeta;
+    }
+
+    public void linkFileMeta(LocalFile localFile)
+    {
+        localFilesMeta.add(localFile);
+        localFile.setFileContent(this);
+    }
+
+    public void unlinkFileMeta(LocalFile localFile)
+    {
+        localFilesMeta.remove(localFile);
+        localFile.setFileContent(null);
     }
 }

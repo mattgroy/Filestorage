@@ -2,9 +2,11 @@ package net.borolis.spring.dao.mappers;
 
 import net.borolis.spring.dao.interfaces.CassandraFileDAO;
 
+import com.datastax.oss.driver.api.core.CqlIdentifier;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.mapper.MapperBuilder;
 import com.datastax.oss.driver.api.mapper.annotations.DaoFactory;
+import com.datastax.oss.driver.api.mapper.annotations.DaoTable;
 import com.datastax.oss.driver.api.mapper.annotations.Mapper;
 
 /**
@@ -31,4 +33,7 @@ public interface CassandraMapper
      */
     @DaoFactory
     CassandraFileDAO cassandraFileDAO();
+
+    @DaoFactory
+    CassandraFileDAO cassandraFileDAO(@DaoTable String table);
 }

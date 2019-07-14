@@ -7,9 +7,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.transaction.annotation.Transactional;
 
-import net.borolis.spring.exceptions.FileStorageException;
 import net.borolis.spring.dao.interfaces.DAO;
 import net.borolis.spring.entity.LocalEntity;
+import net.borolis.spring.exceptions.ResourceNotFoundException;
 
 /**
  * Абстрактный класс, в котором реализовано взаимодействие "по умолчанию" с объектами в PostgreSQL
@@ -41,17 +41,15 @@ public abstract class AbstractPgDAOImpl<T extends LocalEntity> implements DAO<T>
     @Override
     public void delete(long entityId)
     {
-        delete(getById(entityId));
+        delete(get(entityId));
     }
 
     /**
      * Пояснения насчёт resolveTypeArgument(): он позволяет получить класс дженерика в рантайме (аля T.class)
-     *
-     * @throws FileStorageException Не удалось найти объект
      */
     @Transactional
     @Override
-    public T getById(long id) throws FileStorageException
+    public T get(long id)
     {
         LOGGER.info("[PostgreSQL] Finding an entity with id " + id);
         Class<?> tClass = GenericTypeResolver.resolveTypeArgument(getClass(), AbstractPgDAOImpl.class);
@@ -63,10 +61,10 @@ public abstract class AbstractPgDAOImpl<T extends LocalEntity> implements DAO<T>
                 .uniqueResult();
         if (entity == null)
         {
-            throw new FileStorageException(
-                    String.format("[PostgreSQL] Could not find \"%s\" with id \"%s\"", tClass, id));
+            LOGGER.info(String.format("[PostgreSQL] Could not find \"%s\" with id \"%s\"", tClass.getName(), id));
+            throw new ResourceNotFoundException(
+                    String.format("[PostgreSQL] Could not find \"%s\" with id \"%s\"", tClass.getName(), id));
         }
-
         LOGGER.info("[PostgreSQL] Entity " + entity + " found");
         return entity;
     }

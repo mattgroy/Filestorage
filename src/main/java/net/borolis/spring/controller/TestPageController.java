@@ -6,7 +6,7 @@
 //import org.springframework.web.bind.annotation.PathVariable;
 //import org.springframework.web.bind.annotation.ResponseBody;
 //
-//import net.borolis.spring.util.CassandraDDL;
+//import net.borolis.spring.utils.CassandraDDL;
 //
 //import com.datastax.oss.driver.api.core.CqlSession;
 //import com.datastax.oss.driver.api.core.cql.BoundStatement;

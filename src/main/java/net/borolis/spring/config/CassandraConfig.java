@@ -16,7 +16,7 @@ import com.datastax.oss.driver.api.core.CqlSession;
  * @since 12 июля, 2019
  */
 @Configuration
-@PropertySource(value = { "classpath:application.properties" })
+//@PropertySource(value = { "classpath:application.properties" })
 public class CassandraConfig
 {
     /**
@@ -31,9 +31,8 @@ public class CassandraConfig
     }
 
     /**
-     *
      * @param session инициализированная сессия {@link CqlSession}
-     * @return
+     * @return Объект, создающий реализацию ДАО интерфейсов для переданной сессии
      */
     @Bean
     @Autowired
@@ -42,6 +41,11 @@ public class CassandraConfig
         return CassandraMapper.builder(session).build();
     }
 
+    /**
+     * Создание реализации {@link CassandraFileDAO}
+     * @param cassandraMapper {@link CassandraMapper}
+     * @return ДАО объект для работы с файлами в Кассандре
+     */
     @Bean
     @Autowired
     public CassandraFileDAO cassandraFileDAO(CassandraMapper cassandraMapper)

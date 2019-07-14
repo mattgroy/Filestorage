@@ -26,12 +26,12 @@ import net.borolis.spring.service.LocalFileStorageService;
 @Controller
 public class FileStorageController
 {
-    private final LocalFileStorageService localFileStorageService;
+    private final FileStorageController fileStorageController;
 
     @Autowired
-    public FileStorageController(final LocalFileStorageService localFileStorageService)
+    public FileStorageController(final FileStorageController fileStorageController)
     {
-        this.localFileStorageService = localFileStorageService;
+        this.fileStorageController = fileStorageController;
     }
 
     /**
@@ -44,7 +44,7 @@ public class FileStorageController
     @ResponseBody
     public ResponseEntity deleteFile(@PathVariable("id") final long fileId)
     {
-        return localFileStorageService.deleteFile(fileId);
+        return fileStorageController.deleteFile(fileId);
     }
 
     /**
@@ -57,7 +57,7 @@ public class FileStorageController
     @ResponseBody
     public ResponseEntity<byte[]> downloadFile(@PathVariable("id") final long fileId)
     {
-        return localFileStorageService.getFileContent(fileId);
+        return fileStorageController.getFileWrapped(fileId);
     }
 
     /**
@@ -69,7 +69,7 @@ public class FileStorageController
     @ResponseBody
     public List<LocalFile> getFiles()
     {
-        return localFileStorageService.getFiles();
+        return fileStorageController.getFiles();
     }
 
     /**
@@ -82,7 +82,7 @@ public class FileStorageController
     @ResponseBody
     public ResponseEntity uploadAllFilesContentHandler()
     {
-        return localFileStorageService.saveAllFilesContentToRemote();
+        return fileStorageController.saveAllFilesContentToRemote();
     }
 
     /**
@@ -94,7 +94,7 @@ public class FileStorageController
     @PostMapping("/api/v1/files")
     public String uploadFileLocally(@RequestParam("file") final MultipartFile file)
     {
-        localFileStorageService.saveFileLocally(file);
+        fileStorageController.saveFile(file);
         return "redirect:/";
     }
 
@@ -108,6 +108,6 @@ public class FileStorageController
     @ResponseBody
     public ResponseEntity uploadFileToRemote(@PathVariable("id") final long fileId)
     {
-        return localFileStorageService.saveFileContentToRemote(fileId);
+        return fileStorageController.saveFileContentToRemote(fileId);
     }
 }

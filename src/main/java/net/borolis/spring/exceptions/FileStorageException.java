@@ -1,7 +1,7 @@
 package net.borolis.spring.exceptions;
 
 /**
- * Ошибка общего назначения
+ * Исключение общего назначения
  * @author mratkov
  * @since 11 июля, 2019
  */
