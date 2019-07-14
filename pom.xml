@@ -101,13 +101,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.datastax.oss</groupId>
-			<artifactId>java-driver-mapper-processor</artifactId>
-			<version>${cassandra.java-driver.version}</version>
-			<optional>true</optional>
-		</dependency>
-
-		<dependency>
 			<groupId>javax.inject</groupId>
 			<artifactId>javax.inject</artifactId>
 			<version>1</version>
@@ -130,6 +123,13 @@
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>1.2.3</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.datastax.oss</groupId>
+			<artifactId>java-driver-mapper-processor</artifactId>
+			<version>${cassandra.java-driver.version}</version>
+			<optional>true</optional>
 		</dependency>
 
 	</dependencies>

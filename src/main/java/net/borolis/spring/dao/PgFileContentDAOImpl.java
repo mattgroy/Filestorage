@@ -34,7 +34,7 @@ public class PgFileContentDAOImpl extends AbstractPgDAOImpl<LocalFileContent> im
         LocalFileContent localFileContent = (LocalFileContent)sessionFactory
                 .getCurrentSession()
                 .createCriteria(LocalFileContent.class)
-                .add(Restrictions.eq("cassandraUUID", hash))
+                .add(Restrictions.eq("hash", hash))
                 .setMaxResults(1)
                 .uniqueResult();
         if (localFileContent == null)
