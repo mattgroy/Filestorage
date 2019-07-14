@@ -1,9 +1,6 @@
 package net.borolis.spring.dao.interfaces;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 import net.borolis.spring.entity.LocalFile;
 import net.borolis.spring.exceptions.LocalBDConnectionFailException;
@@ -11,11 +8,11 @@ import net.borolis.spring.exceptions.LocalBDConnectionFailException;
 /**
  * Интерфейс DAO для {@link LocalFile}
  *
- * @see DAO
+ * @see LocalDAO
  * @author mratkov
  * @since 9 июля, 2019
  */
-public interface LocalFileDAO extends DAO<LocalFile>
+public interface LocalFileDAO extends LocalDAO<LocalFile>
 {
     /**
      * Получение метаинформации всех хранимых файлов
@@ -31,5 +28,5 @@ public interface LocalFileDAO extends DAO<LocalFile>
      * @return Список с метаинформацией файлов
      * @throws LocalBDConnectionFailException Ошибка соединения с БД
      */
-    Collection<LocalFile> getFiles(String hash) throws LocalBDConnectionFailException;
+    Collection<LocalFile> getFilesBy(String hash) throws LocalBDConnectionFailException;
 }

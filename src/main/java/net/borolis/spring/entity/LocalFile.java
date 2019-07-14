@@ -2,6 +2,7 @@ package net.borolis.spring.entity;
 
 import java.util.Objects;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -33,12 +34,14 @@ public class LocalFile implements LocalEntity
      * Название файла
      */
     @Column(name = "title")
+//    @Basic(fetch = FetchType.LAZY)
     private String title;
 
     /**
      * MIME-тип файла
      */
     @Column(name = "type")
+//    @Basic(fetch = FetchType.LAZY)
     private String mimeType;
 
     /**
@@ -46,37 +49,23 @@ public class LocalFile implements LocalEntity
      */
     @JsonIgnore
     @Column(name = "hash")
+//    @Basic(fetch = FetchType.LAZY)
     private String hash;
-
-    /**
-     * Контент файла
-     */
-    @JsonIgnore
-    @Column(name = "fileContent")
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tbl_files_content_id")
-    private LocalFileContent fileContent;
 
     public LocalFile()
     {
     }
 
-    public LocalFile(String title, String mimeType, String hash, LocalFileContent fileContent)
+    public LocalFile(String title, String mimeType, String hash)
     {
         this.title = title;
         this.hash = hash;
         this.mimeType = mimeType;
-        this.fileContent = fileContent;
     }
 
     public String getHash()
     {
         return hash;
-    }
-
-    public LocalFileContent getFileContent()
-    {
-        return fileContent;
     }
 
     public Long getId()
@@ -97,11 +86,6 @@ public class LocalFile implements LocalEntity
     public void setHash(String hash)
     {
         this.hash = hash;
-    }
-
-    public void setFileContent(LocalFileContent fileContent)
-    {
-        this.fileContent = fileContent;
     }
 
     public void setId(Long id)
@@ -125,20 +109,20 @@ public class LocalFile implements LocalEntity
         return getId() + "  " + getTitle() + "  " + getHash() + "  " + getMimeType();
     }
 
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        LocalFile localFile = (LocalFile)o;
-        return getId().equals(localFile.getId());
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash(getId());
-    }
+//    @Override
+//    public boolean equals(Object o)
+//    {
+//        if (this == o)
+//            return true;
+//        if (o == null || getClass() != o.getClass())
+//            return false;
+//        LocalFile localFile = (LocalFile)o;
+//        return getId().equals(localFile.getId());
+//    }
+//
+//    @Override
+//    public int hashCode()
+//    {
+//        return Objects.hash(getId());
+//    }
 }

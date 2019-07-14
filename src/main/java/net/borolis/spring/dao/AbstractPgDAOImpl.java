@@ -1,5 +1,7 @@
 package net.borolis.spring.dao;
 
+import java.util.Optional;
+
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
@@ -7,17 +9,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.transaction.annotation.Transactional;
 
-import net.borolis.spring.dao.interfaces.DAO;
+import net.borolis.spring.dao.interfaces.LocalDAO;
 import net.borolis.spring.entity.LocalEntity;
-import net.borolis.spring.exceptions.ResourceNotFoundException;
 
 /**
  * Абстрактный класс, в котором реализовано взаимодействие "по умолчанию" с объектами в PostgreSQL
- * @see DAO
+ * @see LocalDAO
  * @author mratkov
  * @since 9 июля, 2019
  */
-public abstract class AbstractPgDAOImpl<T extends LocalEntity> implements DAO<T>
+public abstract class AbstractPgDAOImpl<T extends LocalEntity> implements LocalDAO<T>
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPgDAOImpl.class);
 
@@ -37,19 +38,19 @@ public abstract class AbstractPgDAOImpl<T extends LocalEntity> implements DAO<T>
         LOGGER.info("[PostgreSQL] Entity " + entity + " deleted");
     }
 
-    @Transactional
-    @Override
-    public void delete(long entityId)
-    {
-        delete(get(entityId));
-    }
+//    @Transactional
+//    @Override
+//    public void deleteBy(long entityId)
+//    {
+//        getBy(entityId).ifPresent(this::delete);
+//    }
 
     /**
      * Пояснения насчёт resolveTypeArgument(): он позволяет получить класс дженерика в рантайме (аля T.class)
      */
     @Transactional
     @Override
-    public T get(long id)
+    public Optional<T> getBy(long id)
     {
         LOGGER.info("[PostgreSQL] Finding an entity with id " + id);
         Class<?> tClass = GenericTypeResolver.resolveTypeArgument(getClass(), AbstractPgDAOImpl.class);
@@ -62,19 +63,20 @@ public abstract class AbstractPgDAOImpl<T extends LocalEntity> implements DAO<T>
         if (entity == null)
         {
             LOGGER.info(String.format("[PostgreSQL] Could not find \"%s\" with id \"%s\"", tClass.getName(), id));
-            throw new ResourceNotFoundException(
-                    String.format("[PostgreSQL] Could not find \"%s\" with id \"%s\"", tClass.getName(), id));
+            return Optional.empty();
+//            throw new ResourceNotFoundException(
+//                    String.format("[PostgreSQL] Could not find \"%s\" with id \"%s\"", tClass.getName(), id));
         }
         LOGGER.info("[PostgreSQL] Entity " + entity + " found");
-        return entity;
+        return Optional.of(entity);
     }
 
     @Transactional
     @Override
-    public void saveOrUpdate(T entity)
+    public void save(T entity)
     {
         LOGGER.info("[PostgreSQL] Saving " + entity);
-        sessionFactory.getCurrentSession().saveOrUpdate(entity);
+        sessionFactory.getCurrentSession().save(entity);
         LOGGER.info("[PostgreSQL] Entity " + entity + " saved");
     }
 }

@@ -31,12 +31,6 @@ public class LocalFileContent implements LocalEntity
     private Long id;
 
     /**
-     * Список мета-информации файлов с данным контентом
-     */
-    @OneToMany(mappedBy = "fileContent")
-    private List<LocalFile> localFilesMeta  = new ArrayList<>();
-
-    /**
      * Хэш контента
      */
     @Column(name = "hash")
@@ -47,7 +41,7 @@ public class LocalFileContent implements LocalEntity
      */
     @Lob
     @Column(name = "content")
-    @Basic(fetch = FetchType.LAZY)
+//    @Basic(fetch = FetchType.LAZY)
     private byte[] content;
 
     public LocalFileContent()
@@ -75,11 +69,6 @@ public class LocalFileContent implements LocalEntity
         return id;
     }
 
-    public List<LocalFile> getLocalFilesMeta()
-    {
-        return localFilesMeta;
-    }
-
     public void setHash(String hash)
     {
         this.hash = hash;
@@ -93,22 +82,5 @@ public class LocalFileContent implements LocalEntity
     public void setId(Long id)
     {
         this.id = id;
-    }
-
-    public void setLocalFilesMeta(List<LocalFile> localFilesMeta)
-    {
-        this.localFilesMeta = localFilesMeta;
-    }
-
-    public void linkFileMeta(LocalFile localFile)
-    {
-        localFilesMeta.add(localFile);
-        localFile.setFileContent(this);
-    }
-
-    public void unlinkFileMeta(LocalFile localFile)
-    {
-        localFilesMeta.remove(localFile);
-        localFile.setFileContent(null);
     }
 }

@@ -10,38 +10,34 @@ import net.borolis.spring.exceptions.ResourceNotFoundException;
  * @author mratkov
  * @since 9 июля, 2019
  */
-public interface DAO<T>
+public interface LocalDAO<T>
 {
     /**
      * Удаление объекта из БД
      *
      * @param entity - объект
-     * @throws ResourceNotFoundException Ресурс не найден
      */
-    void delete(final T entity) throws ResourceNotFoundException;
+    void delete(final T entity);
 
-    /**
-     * Удаление объекта из БД по id
-     *
-     * @param entityId - id объекта
-     * @throws ResourceNotFoundException Ресурс не найден
-     */
-    void delete(final long entityId) throws ResourceNotFoundException;
+//    /**
+//     * Удаление объекта из БД по id
+//     *
+//     * @param entityId - id объекта
+//     */
+//    void deleteBy(final long entityId);
 
     /**
      * Взятие объекта из БД по id
      *
      * @param id - id объекта
      * @return Entity объект локальной БД
-     * @throws ResourceNotFoundException Ресурс не найден
      */
-    T get(final long id) throws ResourceNotFoundException;
+    Optional<T> getBy(final long id);
 
     /**
      * Обновление или сохранение объекта в БД
      *
      * @param entity - объект
-     * @throws ResourceNotFoundException Ресурс не найден
      */
-    void saveOrUpdate(final T entity) throws ResourceNotFoundException;
+    void save(final T entity);
 }

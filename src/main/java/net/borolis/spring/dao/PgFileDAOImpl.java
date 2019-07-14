@@ -1,11 +1,8 @@
 package net.borolis.spring.dao;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,12 +21,12 @@ import net.borolis.spring.exceptions.LocalBDConnectionFailException;
  * @since 9 июля, 2019
  */
 @Component
-public class PgLocalFileDAOImpl extends AbstractPgDAOImpl<LocalFile> implements LocalFileDAO
+public class PgFileDAOImpl extends AbstractPgDAOImpl<LocalFile> implements LocalFileDAO
 {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PgLocalFileDAOImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PgFileDAOImpl.class);
 
     @Autowired
-    public PgLocalFileDAOImpl(final SessionFactory sessionFactory)
+    public PgFileDAOImpl(final SessionFactory sessionFactory)
     {
         super(sessionFactory);
     }
@@ -48,7 +45,7 @@ public class PgLocalFileDAOImpl extends AbstractPgDAOImpl<LocalFile> implements 
     }
 
     @Override
-    public Collection<LocalFile> getFiles(String hash) throws LocalBDConnectionFailException
+    public Collection<LocalFile> getFilesBy(String hash) throws LocalBDConnectionFailException
     {
         LOGGER.info("[PostgreSQL] Getting all LocalFiles with content hash " + hash);
         Collection<LocalFile> list = sessionFactory

@@ -1,10 +1,10 @@
 package net.borolis.spring.controller;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -44,7 +44,8 @@ public class FileStorageRestController
     @DeleteMapping(value = "/api/v1/files/{id}")
     public ResponseEntity deleteFile(@PathVariable("id") final long fileId)
     {
-        fileStorageService.deleteFile(fileId);
+        LocalFile localFile = fileStorageService.getFileMetaBy(fileId);
+        fileStorageService.deleteFile(localFile);
         return ResponseEntity.noContent().build();
     }
 
@@ -57,7 +58,13 @@ public class FileStorageRestController
     @GetMapping(value = "/api/v1/files/{id}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<byte[]> downloadFile(@PathVariable("id") final long fileId)
     {
-        return fileStorageService.getFileWrapped(fileId);
+        LocalFile localFile = fileStorageService.getFileMetaBy(fileId);
+        byte[] content = fileStorageService.getFileContent(localFile);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        String.format("attachment; filename=\"%s\"", localFile.getTitle()))
+                .body(content);
     }
 
     /**
@@ -66,20 +73,19 @@ public class FileStorageRestController
      * @return Список с метаинформацией хранимых файлов
      */
     @GetMapping(value = "/api/v1/files", produces = "application/json")
-    public Collection<LocalFile> getFiles()
+    public Collection<LocalFile> getFilesMeta()
     {
-        return fileStorageService.getFiles();
+        return fileStorageService.getFilesMeta();
     }
 
     /**
      * Обработчик запроса на загрузку контента всех файлов в удалённую БД
-     *
-     * @return Список с ID загруженных файлов
      */
+    // TODO: 13.07.19  Можно возвращать список с ID загруженных файлов
     @PostMapping("/api/v1/files/locals")
-    public Collection<Long> uploadAllFilesContent()
+    public void uploadAllFilesContent()
     {
-        return fileStorageService.saveAllFilesContent();
+        fileStorageService.saveAllFilesContent();
     }
 
     /**
@@ -90,8 +96,10 @@ public class FileStorageRestController
     @PostMapping("/api/v1/files")
     public ResponseEntity uploadFileToLocal(@RequestParam("file") final MultipartFile file)
     {
-        long id = fileStorageService.saveFile(file);
-        return ResponseEntity.status(HttpStatus.CREATED).body(id);
+        Optional<Long> id = fileStorageService.saveFile(file);
+        if (id.isPresent())
+            return ResponseEntity.status(HttpStatus.CREATED).body(id);
+        return ResponseEntity.badRequest().body("File content is empty");
     }
 
     /**
@@ -100,8 +108,9 @@ public class FileStorageRestController
      * @param localFileId ID файла в локальной БД
      */
     @PostMapping("/api/v1/files/{id}")
-    public Collection<Long> uploadFileToRemote(@PathVariable("id") final long localFileId)
+    public Collection<Long> uploadFileToRemote(@PathVariable("id") final long fileId)
     {
-        return fileStorageService.saveFileContent(localFileId);
+        LocalFile localFile = fileStorageService.getFileMetaBy(fileId);
+        return fileStorageService.saveFileContent(localFile);
     }
 }

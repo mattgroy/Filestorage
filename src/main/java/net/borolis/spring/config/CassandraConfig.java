@@ -4,9 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 
 import net.borolis.spring.dao.interfaces.CassandraFileDAO;
 import net.borolis.spring.dao.mappers.CassandraMapper;
+import net.borolis.spring.utils.CassandraDDL;
 
 import com.datastax.oss.driver.api.core.CqlSession;
 
@@ -16,7 +18,7 @@ import com.datastax.oss.driver.api.core.CqlSession;
  * @since 12 июля, 2019
  */
 @Configuration
-//@PropertySource(value = { "classpath:application.properties" })
+@PropertySource(value = { "classpath:application.properties" })
 public class CassandraConfig
 {
     /**
@@ -24,9 +26,14 @@ public class CassandraConfig
      * @return {@link CqlSession}
      */
     @Bean
-    public CqlSession sqlSession()
+    @Autowired
+    public CqlSession sqlSession(Environment env)
     {
         CqlSession cqlSession = CqlSession.builder().build();
+//        CassandraDDL.checkAndFixCassandraStructure(
+//                cqlSession,
+//                env.getProperty("cassandra.keyspace.name"),
+//                env.getProperty("cassandra.table.name"));
         return cqlSession;
     }
 

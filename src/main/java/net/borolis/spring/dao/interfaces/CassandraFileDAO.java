@@ -36,7 +36,7 @@ public interface CassandraFileDAO
      * @param hash Хеш файла
      */
     @Delete(entityClass = CassandraFile.class)
-    void delete(final String hash);
+    void deleteBy(final String hash);
 
     /**
      * Получение файла из БД по хешу
@@ -45,7 +45,7 @@ public interface CassandraFileDAO
      * @return {@link CassandraFile}
      */
     @Select
-    Optional<CassandraFile> getByHash(final String hash);
+    Optional<CassandraFile> getBy(final String hash);
 
     /**
      * Вставка файла в БД
@@ -55,6 +55,6 @@ public interface CassandraFileDAO
     @Insert(ifNotExists = true)
     void save(final CassandraFile cassandraFile);
 
-    @QueryProvider(providerClass = CassandraFileProvider.class, entityHelpers = CassandraFile.class)
-    boolean isHashStored(final String hash);
+//    @QueryProvider(providerClass = CassandraFileProvider.class, entityHelpers = CassandraFile.class)
+//    boolean isHashStored(final String hash);
 }
