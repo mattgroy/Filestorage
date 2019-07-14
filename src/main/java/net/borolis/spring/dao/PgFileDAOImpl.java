@@ -44,6 +44,7 @@ public class PgFileDAOImpl extends AbstractPgDAOImpl<LocalFile> implements Local
         return list;
     }
 
+    @Transactional
     @Override
     public Collection<LocalFile> getFilesBy(String hash) throws LocalBDConnectionFailException
     {

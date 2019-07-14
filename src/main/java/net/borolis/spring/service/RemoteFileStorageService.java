@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import net.borolis.spring.dao.interfaces.CassandraFileDAO;
 import net.borolis.spring.entity.CassandraFile;
@@ -18,7 +18,7 @@ import net.borolis.spring.entity.LocalFileContent;
  * @author mratkov
  * @since 13 июля, 2019
  */
-@Service
+@Component
 public class RemoteFileStorageService
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(RemoteFileStorageService.class);
@@ -39,21 +39,21 @@ public class RemoteFileStorageService
         cassandraFileDAO.deleteBy(hash);
     }
 
-//    public long[] saveAllFilesContent()
-//    {
-//        List<LocalFile> files = localFileStorageService.getFilesMeta();
-//        files.forEach(localFile ->
-//        {
-//            saveFileContent(localFile.getFileContent())
-//        });
-//        return ResponseEntity.ok(null);
-//    }
+    //    public long[] saveAllFilesContent()
+    //    {
+    //        List<LocalFile> files = localFileStorageService.getFilesMeta();
+    //        files.forEach(localFile ->
+    //        {
+    //            saveFileContent(localFile.getFileContent())
+    //        });
+    //        return ResponseEntity.ok(null);
+    //    }
 
     public void saveFileContent(LocalFileContent localFileContent)
     {
         cassandraFileDAO.save(
                 new CassandraFile(localFileContent.getHash(),
-                ByteBuffer.wrap(localFileContent.getContent())));
+                        ByteBuffer.wrap(localFileContent.getContent())));
     }
 
     public Optional<CassandraFile> getByHash(String hash)

@@ -2,8 +2,6 @@ package net.borolis.spring.dao.interfaces;
 
 import java.util.Optional;
 
-import net.borolis.spring.exceptions.ResourceNotFoundException;
-
 /**
  * Дженерик интерфейс для работы с объектами в локальной БД
  *
@@ -19,12 +17,12 @@ public interface LocalDAO<T>
      */
     void delete(final T entity);
 
-//    /**
-//     * Удаление объекта из БД по id
-//     *
-//     * @param entityId - id объекта
-//     */
-//    void deleteBy(final long entityId);
+    //    /**
+    //     * Удаление объекта из БД по id
+    //     *
+    //     * @param entityId - id объекта
+    //     */
+    //    void deleteBy(final long entityId);
 
     /**
      * Взятие объекта из БД по id

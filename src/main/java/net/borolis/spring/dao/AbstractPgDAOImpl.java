@@ -38,12 +38,12 @@ public abstract class AbstractPgDAOImpl<T extends LocalEntity> implements LocalD
         LOGGER.info("[PostgreSQL] Entity " + entity + " deleted");
     }
 
-//    @Transactional
-//    @Override
-//    public void deleteBy(long entityId)
-//    {
-//        getBy(entityId).ifPresent(this::delete);
-//    }
+    //    @Transactional
+    //    @Override
+    //    public void deleteBy(long entityId)
+    //    {
+    //        getBy(entityId).ifPresent(this::delete);
+    //    }
 
     /**
      * Пояснения насчёт resolveTypeArgument(): он позволяет получить класс дженерика в рантайме (аля T.class)
@@ -64,8 +64,9 @@ public abstract class AbstractPgDAOImpl<T extends LocalEntity> implements LocalD
         {
             LOGGER.info(String.format("[PostgreSQL] Could not find \"%s\" with id \"%s\"", tClass.getName(), id));
             return Optional.empty();
-//            throw new ResourceNotFoundException(
-//                    String.format("[PostgreSQL] Could not find \"%s\" with id \"%s\"", tClass.getName(), id));
+            //            throw new ResourceNotFoundException(
+            //                    String.format("[PostgreSQL] Could not find \"%s\" with id \"%s\"", tClass.getName()
+            //                    , id));
         }
         LOGGER.info("[PostgreSQL] Entity " + entity + " found");
         return Optional.of(entity);

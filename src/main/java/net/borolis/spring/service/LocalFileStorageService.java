@@ -7,14 +7,14 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import net.borolis.spring.exceptions.FileStorageException;
 import net.borolis.spring.dao.interfaces.LocalFileContentDAO;
 import net.borolis.spring.dao.interfaces.LocalFileDAO;
 import net.borolis.spring.entity.LocalFile;
 import net.borolis.spring.entity.LocalFileContent;
+import net.borolis.spring.exceptions.FileStorageException;
 import net.borolis.spring.exceptions.ResourceNotFoundException;
 import net.borolis.spring.utils.GeneralUtils;
 
@@ -25,7 +25,7 @@ import net.borolis.spring.utils.GeneralUtils;
  * @author mratkov
  * @since July 8, 2019
  */
-@Service
+@Component
 public class LocalFileStorageService
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(LocalFileStorageService.class);

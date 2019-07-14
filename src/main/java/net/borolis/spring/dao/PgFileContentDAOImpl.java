@@ -41,13 +41,15 @@ public class PgFileContentDAOImpl extends AbstractPgDAOImpl<LocalFileContent> im
         {
             LOGGER.info("[PostgreSQL] Could not find FileContent with hash: " + hash);
             return Optional.empty();
-//            throw new ResourceNotFoundException("[PostgreSQL] Could not find FileContent with hash: " + hash);
+            //            throw new ResourceNotFoundException("[PostgreSQL] Could not find FileContent with hash: " +
+            //            hash);
         }
 
         LOGGER.info("[PostgreSQL] FileContent with hash: " + hash + " found");
         return Optional.of(localFileContent);
     }
 
+    @Transactional
     @Override
     public Collection<LocalFileContent> getFilesContent() throws LocalBDConnectionFailException
     {
@@ -60,10 +62,11 @@ public class PgFileContentDAOImpl extends AbstractPgDAOImpl<LocalFileContent> im
         return list;
     }
 
+    @Transactional
     @Override
     public void deleteBy(String hash)
     {
         getBy(hash).ifPresent(this::delete);
-//        delete(getBy(hash));
+        //        delete(getBy(hash));
     }
 }

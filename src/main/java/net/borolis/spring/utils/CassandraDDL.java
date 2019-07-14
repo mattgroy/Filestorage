@@ -99,7 +99,8 @@ public class CassandraDDL
      * @param tableName table name
      * @return наличие keyspace  & table
      */
-    private static boolean isKeyspaceAndTableExists(final CqlSession cqlSession, final String keyspaceName, final String tableName)
+    private static boolean isKeyspaceAndTableExists(final CqlSession cqlSession, final String keyspaceName,
+            final String tableName)
     {
         String query = "SELECT * FROM system_schema.tables WHERE keyspace_name=? and table_name=?";
         PreparedStatement prepared = cqlSession.prepare(query);

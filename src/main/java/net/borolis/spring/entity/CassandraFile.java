@@ -1,7 +1,6 @@
 package net.borolis.spring.entity;
 
 import java.nio.ByteBuffer;
-import java.util.UUID;
 
 import com.datastax.oss.driver.api.mapper.annotations.CqlName;
 import com.datastax.oss.driver.api.mapper.annotations.Entity;
@@ -20,7 +19,7 @@ public class CassandraFile
 {
     @PartitionKey
     @CqlName("file_hash")
-    private String  hash;
+    private String hash;
 
     @CqlName("file_content")
     private ByteBuffer content;

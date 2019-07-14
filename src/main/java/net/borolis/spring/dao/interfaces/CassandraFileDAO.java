@@ -2,14 +2,11 @@ package net.borolis.spring.dao.interfaces;
 
 import java.util.Optional;
 
-import net.borolis.spring.dao.mappers.CassandraFileProvider;
 import net.borolis.spring.entity.CassandraFile;
 
 import com.datastax.oss.driver.api.mapper.annotations.Dao;
 import com.datastax.oss.driver.api.mapper.annotations.Delete;
 import com.datastax.oss.driver.api.mapper.annotations.Insert;
-import com.datastax.oss.driver.api.mapper.annotations.Query;
-import com.datastax.oss.driver.api.mapper.annotations.QueryProvider;
 import com.datastax.oss.driver.api.mapper.annotations.Select;
 
 /**
@@ -55,6 +52,6 @@ public interface CassandraFileDAO
     @Insert(ifNotExists = true)
     void save(final CassandraFile cassandraFile);
 
-//    @QueryProvider(providerClass = CassandraFileProvider.class, entityHelpers = CassandraFile.class)
-//    boolean isHashStored(final String hash);
+    //    @QueryProvider(providerClass = CassandraFileProvider.class, entityHelpers = CassandraFile.class)
+    //    boolean isHashStored(final String hash);
 }

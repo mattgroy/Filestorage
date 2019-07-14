@@ -24,12 +24,12 @@
         </rollingPolicy>
     </appender>
 
-    <logger name="net.borolis.spring" level="INFO"/>
-    <logger name="org.hibernate.SQL" level="INFO"/>
+    <logger name="net.borolis.spring" level="DEBUG"/>
+    <logger name="org.hibernate.SQL" level="DEBUG"/>
     <logger name="org.hibernate.type" level="INFO"/>
-    <logger name="com.datastax.oss.driver" level="INFO"/>
+    <logger name="com.datastax.oss.driver" level="DEBUG"/>
 
-    <root level="INFO">
+    <root level="DEBUG">
         <appender-ref ref="file"/>
         <appender-ref ref="console"/>
     </root>

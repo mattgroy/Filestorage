@@ -8,7 +8,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import net.borolis.spring.entity.CassandraFile;
@@ -16,7 +16,7 @@ import net.borolis.spring.entity.LocalFile;
 import net.borolis.spring.entity.LocalFileContent;
 import net.borolis.spring.exceptions.FileStorageException;
 
-@Service
+@Component
 public class FileStorageService
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(FileStorageService.class);

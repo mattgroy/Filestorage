@@ -1,16 +1,10 @@
 package net.borolis.spring.entity;
 
-import java.util.Objects;
-
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -34,14 +28,14 @@ public class LocalFile implements LocalEntity
      * Название файла
      */
     @Column(name = "title")
-//    @Basic(fetch = FetchType.LAZY)
+    //    @Basic(fetch = FetchType.LAZY)
     private String title;
 
     /**
      * MIME-тип файла
      */
     @Column(name = "type")
-//    @Basic(fetch = FetchType.LAZY)
+    //    @Basic(fetch = FetchType.LAZY)
     private String mimeType;
 
     /**
@@ -49,7 +43,7 @@ public class LocalFile implements LocalEntity
      */
     @JsonIgnore
     @Column(name = "hash")
-//    @Basic(fetch = FetchType.LAZY)
+    //    @Basic(fetch = FetchType.LAZY)
     private String hash;
 
     public LocalFile()
@@ -109,20 +103,20 @@ public class LocalFile implements LocalEntity
         return getId() + "  " + getTitle() + "  " + getHash() + "  " + getMimeType();
     }
 
-//    @Override
-//    public boolean equals(Object o)
-//    {
-//        if (this == o)
-//            return true;
-//        if (o == null || getClass() != o.getClass())
-//            return false;
-//        LocalFile localFile = (LocalFile)o;
-//        return getId().equals(localFile.getId());
-//    }
-//
-//    @Override
-//    public int hashCode()
-//    {
-//        return Objects.hash(getId());
-//    }
+    //    @Override
+    //    public boolean equals(Object o)
+    //    {
+    //        if (this == o)
+    //            return true;
+    //        if (o == null || getClass() != o.getClass())
+    //            return false;
+    //        LocalFile localFile = (LocalFile)o;
+    //        return getId().equals(localFile.getId());
+    //    }
+    //
+    //    @Override
+    //    public int hashCode()
+    //    {
+    //        return Objects.hash(getId());
+    //    }
 }

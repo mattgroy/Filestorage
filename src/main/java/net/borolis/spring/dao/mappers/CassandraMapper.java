@@ -2,7 +2,6 @@ package net.borolis.spring.dao.mappers;
 
 import net.borolis.spring.dao.interfaces.CassandraFileDAO;
 
-import com.datastax.oss.driver.api.core.CqlIdentifier;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.mapper.MapperBuilder;
 import com.datastax.oss.driver.api.mapper.annotations.DaoFactory;
@@ -10,7 +9,8 @@ import com.datastax.oss.driver.api.mapper.annotations.DaoTable;
 import com.datastax.oss.driver.api.mapper.annotations.Mapper;
 
 /**
- * Класс, возвращающий реализаций DAO для Entity-объектов ({@link com.datastax.oss.driver.api.mapper.annotations.Entity}) Кассандры
+ * Класс, возвращающий реализаций DAO для Entity-объектов
+ * ({@link com.datastax.oss.driver.api.mapper.annotations.Entity}) Кассандры
  * @author mratkov
  * @since 12 июля, 2019
  */
@@ -23,7 +23,8 @@ public interface CassandraMapper
      * @param session {@link CqlSession}
      * @return {@link MapperBuilder}
      */
-    static MapperBuilder<CassandraMapper> builder(CqlSession session) {
+    static MapperBuilder<CassandraMapper> builder(CqlSession session)
+    {
         return new CassandraMapperBuilder(session);
     }
 

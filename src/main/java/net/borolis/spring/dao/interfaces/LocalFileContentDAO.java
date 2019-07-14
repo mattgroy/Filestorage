@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import net.borolis.spring.entity.LocalFileContent;
 import net.borolis.spring.exceptions.LocalBDConnectionFailException;
-import net.borolis.spring.exceptions.ResourceNotFoundException;
 
 /**
  * Интерфейс DAO для {@link LocalFileContent}
